@@ -54,13 +54,11 @@ int main()
 			case 1: onePlayer(table, &game1);break;
 			case 2: twoPlayers(table, &game2);break;
 			case 3:
-				printf("Los puntos del jugador son: %i\n",game1.playerPoints);
-				printf("Los puntos de la maquina son: %i\n",game1.computerPoints);
+				printf("Los puntos del jugador son: %i\nLos puntos de la maquina son: %i\n",game1.playerPoints,game1.computerPoints);
 				break;
 				
 			case 4:
-				printf("Los puntos del jugador 1 son: %i\n",game2.player1Points);
-				printf("Los puntos del jugador 2 son: %i\n",game2.player2Points);
+				printf("Los puntos del jugador 1 son: %i\nLos puntos del jugador 2 son: %i\n",game2.player1Points,game2.player2Points);
 				break;
 				
 			case 5: key=false;break;
