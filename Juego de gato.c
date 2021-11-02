@@ -1,10 +1,8 @@
 #include<stdio.h>
+#include<stdbool.h>
 #include<stdlib.h>
 #include<time.h>
 /* ↑ Librerias(estandar)*/
-#define true 1
-#define false 0
-/* ↑ Valores true false*/
 typedef struct{
 	unsigned short computerPoints;
 	unsigned short playerPoints;
@@ -28,7 +26,8 @@ void computerTurn(char table[3][3], char token);
 /* ↑ Prototipos de funciones*/
 int main()
 {
-	int key=true, op;
+	bool key=true;
+	int op;
 	char table[3][3]; /*This is the matix that it's going to store the values*/
 	
 	/*Initialices the games, this can be changed to make more than one game */
@@ -65,20 +64,21 @@ int main()
 			default: printf("Operacion no valida\n");break;
 		}
 		system("pause");
-	} while (key==true);
+	} while (key);
 	printf("Adios\n");
-	system("pause"); /*Pauses the system to make it posible for user to read what has been done*/
+	system("pause"); /*Pauses the system to make it posible for user to read the final message*/
 	return 0; 
 }
 void onePlayer(char table[3][3],onePlayerGame *game1){/*Methods used for a one player game/behavior of a one player game*/
-	int winned=false, turns=0;
+	bool winned=false;
+	short turns=0;
 	Positions(table); /*Places cordinates/positions so the player can understand how to select a position*/
 	while(turns<9){ /*Repeats until there are no free spaces left*/
 		board(table); /*Shows board so the player can select a move*/
 		playerTurn(table, game1->playerToken); /*Let's the player select a position and places the player's tocken*/
 		turns++; /*Theres one cordinate/position/turn less*/
 		board(table);
-		if (check(table, game1->playerToken)==true){ /*Checks if the player has won, in wich case felicitates and gives one point to the player*/
+		if (check(table, game1->playerToken)){ /*Checks if the player has won, in wich case felicitates and gives one point to the player*/
 			printf("\nFelicidades '%c' has ganado\n", game1->playerToken);
 			winned=true; /*The game has been won*/ 
 			game1->playerPoints++;
@@ -89,7 +89,7 @@ void onePlayer(char table[3][3],onePlayerGame *game1){/*Methods used for a one p
 			computerTurn(table, game1->computerToken); 
 			turns++;
 			board(table); 
-			if (check(table, game1->computerToken)==true){ /*Checks if the computer has won in which  gives one point to the computer*/
+			if (check(table, game1->computerToken)){ /*Checks if the computer has won in which  gives one point to the computer*/
 				printf("\nLastima la computadora ha ganado\n");
 				winned=true;
 				game1->computerPoints++;
@@ -97,20 +97,21 @@ void onePlayer(char table[3][3],onePlayerGame *game1){/*Methods used for a one p
 			}
 		}
 	}
-	if (winned==false){ /*If nobody won and there are no positions left, its tacken like a tie/draw*/
+	if (!winned){ /*If nobody won and there are no positions left, its tacken like a tie/draw*/
 		printf("\nNadie ha ganado\n");
 	}
 }
 void twoPlayers(char table[3][3],twoPlayersGame *game2){/*methods used for a two players game/behavior of a two players game*/
 	/*The same as the one player with some changes*/
-	int winned=false, turns=0;
+	bool winned=false;
+	short turns=0;
 	Positions(table);
 	while(turns<9){
 		board(table);
 		playerTurn(table, game2->player1Token);
 		turns++;
 		board(table);
-		if (check(table, game2->player1Token)==true){
+		if (check(table, game2->player1Token)){
 			printf("\nFelicidades '%c' has ganado\n", game2->player1Token);
 			winned=true;
 			game2->player1Points++;
@@ -120,21 +121,21 @@ void twoPlayers(char table[3][3],twoPlayersGame *game2){/*methods used for a two
 			playerTurn(table, game2->player2Token); /*instead of making the computer  decide a position makes the other player decide*/
 			turns++;
 			board(table);
-			winned=check(table, game2->player2Token);
-			if (winned==true){
+			if (check(table, game2->player2Token)){
 				printf("\nFelicidades '%c' has ganado\n", game2->player2Token);
+				winned=true;
 				game2->player2Points++;
 				break;
 			}
 		}
 	}
-	if (winned==false)
+	if (!winned)
 	{
 		printf("\nNadie ha ganado\n");
 	}
 }
 void Positions(char table[3][3]){ /*Fills the board's game with the cordinates that will be able to select*/
-	int cordinate=49;/*49 it's for ASCII code of '1' */
+	short cordinate=49;/*49 it's for ASCII code of '1' */
 	for (int i = 0; i < 3; ++i)
 	{
 		for (int j = 0; j < 3; ++j)
@@ -166,7 +167,7 @@ void board(char table[3][3]){ /*Shows the board's game*/
 	}
 }
 int check(char table[3][3], char token){ /*Checks if the game has been won*/
-	int compleated=false; /*Indicates if there's a line of tokens of the same player*/
+	bool compleated=false; /*Indicates if there's a line of tokens of the same player*/
 	for (int i = 0; i < 3; ++i)
 	{
 		if (table[i][0]==token){/*Checks the rows*/
@@ -185,7 +186,7 @@ int check(char table[3][3], char token){ /*Checks if the game has been won*/
 	if ((table[0][0]==token && table[1][1]==token && table[2][2]==token) || (table[0][2]==token && table[1][1]==token && table[2][0]==token)){/*Checks diagonals*/
 		compleated=true;
 	}
-	if(compleated==true){ /*Decides what to send to the function who callled check()*/
+	if(compleated){ /*Decides what to send to the function who callled check()*/
 		return true; /*Tells the function who called check() that the game has been won*/
 	}
 	else{
@@ -194,7 +195,7 @@ int check(char table[3][3], char token){ /*Checks if the game has been won*/
 }
 void playerTurn(char table[3][3], char token){/*Gets the position wanted and places the player's token*/
 	int position;
-	char occuped;
+	char occuped;/*Used to campare if a position is alredy taken*/
 	do{
 		do{/*Makes the player select a valid position*/
 			printf("Introduce la posicion que quieres poner tu ficha (turno de '%c'):", token); /*Asks for a position and tells whose turn is */
@@ -238,7 +239,7 @@ void playerTurn(char table[3][3], char token){/*Gets the position wanted and pla
 }
 void computerTurn(char table[3][3], char token){/*Makes the computer select a position and places its token*/
 	short position;
-	char occuped;
+	char occuped;/*used to copare if a position is already taken*/
 	srand(time(NULL));/*makes the random numbers got by rand() change everytime random() is called*/
 	do{/*Makes the player select a free position*/
 		position=(rand()%9+1);/*Gives a random number between 1 and 9 (included 1 and 9)*/
@@ -258,7 +259,7 @@ void computerTurn(char table[3][3], char token){/*Makes the computer select a po
 				break;
 		}
 	} while(occuped=='X' || occuped=='O');
-	switch (position){ /*puts the player's token on the selected position*/
+	switch (position){ /*puts the computers's token on the selected position*/
 		case 1: table[0][0]=token;break;
 		case 2: table[0][1]=token;break;
 		case 3: table[0][2]=token;break;
